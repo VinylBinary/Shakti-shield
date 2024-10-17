@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoplay Audio on Repeat Visits</title>
+</head>
+<body>
+    <button id="playAudio" style="display:none;">Click to Play Audio</button>
+    <audio id="myAudio" preload="auto">
+        <source src="alert.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var audio = document.getElementById('myAudio');
+            var playButton = document.getElementById('playAudio');
+            
+            // Check if the user has interacted with the audio before
+            if (localStorage.getItem('audioPermissionGranted')) {
+                // Try to autoplay audio if permission was previously granted
+                audio.play().catch(function (error) {
+                    console.log('Autoplay was blocked:', error);
+                });
+            } else {
+                // Show the play button for the first-time visitor
+                playButton.style.display = 'block';
+            }
+
+            // Add click event to play audio and store permission in localStorage
+            playButton.addEventListener('click', function () {
+                audio.play().then(function () {
+                    // Store the audio permission in localStorage after first play
+                    localStorage.setItem('audioPermissionGranted', 'true');
+                    playButton.style.display = 'none'; // Hide button after first play
+                }).catch(function (error) {
+                    console.log('Failed to play audio:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
